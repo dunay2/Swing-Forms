@@ -1,7 +1,10 @@
 package modelo;
 
+import java.util.ArrayList;
 //import java.util.Collection;
 import java.util.List;
+
+import utilities.UserGenerator;
 
 public class GestorUsuario implements IGestorUsuario {
 
@@ -14,14 +17,15 @@ public class GestorUsuario implements IGestorUsuario {
 
 	@Override
 	public List<UsuarioDTO> getUsuarios() {
-
+		ArrayList<UsuarioDTO> al = null;
+		
 		try {
-			usuarioDAO.listUsuarios();
+			al=(ArrayList<UsuarioDTO>) usuarioDAO.getList();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return al;
 
 	}
 
@@ -29,7 +33,7 @@ public class GestorUsuario implements IGestorUsuario {
 	public void altaUsuario(UsuarioDTO usuarioDTO) {
 
 		try {
-			usuarioDAO.altaUsuario(usuarioDTO);
+			usuarioDAO.add(usuarioDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -37,9 +41,9 @@ public class GestorUsuario implements IGestorUsuario {
 	}
 
 	@Override
-	public void bajaUsuario(UsuarioDTO usuarioDTO) {
+	public void bajaUsuario(String userName) {
 		try {
-			usuarioDAO.bajaUsuario(usuarioDTO);
+			usuarioDAO.delete (userName);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,7 +55,7 @@ public class GestorUsuario implements IGestorUsuario {
 	public void modificaUsuario(UsuarioDTO usuarioDTO) {
 
 		try {
-			usuarioDAO.modificaUsuario(usuarioDTO);
+			usuarioDAO.update  (usuarioDTO);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,9 +64,14 @@ public class GestorUsuario implements IGestorUsuario {
 	}
 
 	@Override
-	public UsuarioDTO getUsuario(UsuarioDTO usuarioDTO) {
+	public UsuarioDTO getUsuario(String nombreUsuario) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	@Override
+	public UsuarioDTO CreateRandomUser()
+	{
+		return UserGenerator.generateRandomPerson();
+	}
 }

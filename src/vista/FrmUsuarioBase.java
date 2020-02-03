@@ -10,40 +10,41 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import exception.EX_MANDATORY_FIELDS;
+import helpers.CreateButtonHelper;
+import helpers.CreateFieldHelper;
+import helpers.CreateRadioButtonHelper;
 import modelo.GestorUsuario;
 import modelo.UsuarioDTO;
-import utilities.CreateButtonHelper;
-import utilities.CreateFieldHelper;
-import utilities.CreateRadioButtonHelper;
 import utilities.ProyectBundle;
 
 
 public abstract class FrmUsuarioBase<T> extends JPanel implements ActionListener,IFormulario<UsuarioDTO>   {
 
-	// private fields de obligada declaracion
-	// deben coincidir con los valores en los ficheros properties
-
-	private boolean addressSet = false;
 	private Font regularFont, italicFont;
 	private JLabel statusDisplay;
 	// TODO elegir idioma en conexión
 	private ResourceBundle rb;
-	//ResourceBundle.getBundle("properties.ApplicationResources_en_EN_en");
 	private int GAP = 10;
-	private String currentLocal = "en";
+	
+	
 	private String MANDATORY_FIELDS_MSG="MANDATORY_FIELDS_MSG";
 	private String INVALID_DATE_MSG="INVALID_DATE_MSG";
 	
-
-	JPanel jpanelFields;
-
+	private JPanel jpanelFields;
+	private JPanel jpanelButtons;
+	
+	
+	private CustomListModel listModel;
+	
+	
 	protected abstract T loadRecord() throws Exception;
 	protected abstract boolean validateRecord() throws Exception;
 	
 	public abstract void actionPerformed(ActionEvent e);
 
 	public FrmUsuarioBase() {
-		rb=ProyectBundle.getProyectBundle("ES");
+		
+		rb=ProyectBundle.getInstance("ES");
 		
 		//lectura mensajes de error
 		MANDATORY_FIELDS_MSG = rb.getString(MANDATORY_FIELDS_MSG);
@@ -63,7 +64,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements ActionListener
 		leftHalf.setLayout(new BoxLayout(leftHalf, BoxLayout.PAGE_AXIS));
 
 		// Se toma un JPanel con los componentes creados según archivo properties
-		jpanelFields = new CreateFieldHelper(getCurrentLocal()).createEntryFields();
+		jpanelFields = new CreateFieldHelper().createEntryFields();
 
 		Component[] allTextfields = jpanelFields.getComponents();
 
@@ -111,18 +112,33 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements ActionListener
 		}
 
 		leftHalf.add(jpanelFields);
-		leftHalf.add(new CreateButtonHelper(getCurrentLocal()).createButtons(this));		
+		
+		jpanelButtons=new CreateButtonHelper().createButtons(this);
+		
+		leftHalf.add(jpanelButtons);		
 		add(leftHalf);
 		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
+		add(createInfoDisplay());
+		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
 		add(new CreateRadioButtonHelper().createRadioButtons(this));
-		add(createAddressDisplay());
+		
 		
 	}
 
 
 //Panel derecho
-	protected JComponent createAddressDisplay() {
+	public JComponent createInfoDisplay() {
 		JPanel panel = new JPanel(new BorderLayout());
+		JList<UsuarioDTO> listaUsuarios;
+		
+		
+		listaUsuarios= new JList();
+		
+		listModel = new CustomListModel();
+		//Ahora bajo el initComponents del constructor settearemos el modelo para que el JList ya lo tome por defecto desde que arranquemos la aplicación:
+
+		listaUsuarios.setModel(listModel);
+				
 		statusDisplay = new JLabel();
 		statusDisplay.setHorizontalAlignment(JLabel.CENTER);
 		regularFont = statusDisplay.getFont().deriveFont(Font.PLAIN, 16.0f);
@@ -134,38 +150,50 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements ActionListener
 				GAP / 2, // bottom
 				0)); // right
 		panel.add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
-		panel.add(statusDisplay, BorderLayout.CENTER);
+		panel.add(listaUsuarios, BorderLayout.NORTH);
+		panel.add(statusDisplay, BorderLayout.CENTER);		
 		panel.setPreferredSize(new Dimension(200, 150));
 
 		return panel;
 	}
 
-	protected String getCurrentLocal() {
-		return currentLocal;
-	}
 
-	protected void setCurrentLocal(String currentLocal) {
-		this.currentLocal = currentLocal;
-	}
-
-	protected String getMANDATORY_FIELDS_MSG() {
+	public String getMANDATORY_FIELDS_MSG() {
 		return this.MANDATORY_FIELDS_MSG;
 	}
 
-	protected void setMANDATORY_FIELDS_MSG(String MANDATORY_FIELDS_MSG) {
+	public void setMANDATORY_FIELDS_MSG(String MANDATORY_FIELDS_MSG) {
 		this.MANDATORY_FIELDS_MSG = MANDATORY_FIELDS_MSG;
 	}
 
-	protected String getINVALID_DATE_MSG() {
-		return INVALID_DATE_MSG;
+	public String getINVALID_DATE_MSG() {
+		return this.INVALID_DATE_MSG;
 	}
 
-	protected void setINVALID_DATE_MSG(String iNVALID_DATE_MSG) {
-		INVALID_DATE_MSG = iNVALID_DATE_MSG;
+	public void setINVALID_DATE_MSG(String iNVALID_DATE_MSG) {
+		this.INVALID_DATE_MSG = iNVALID_DATE_MSG;
 	}
 
-	protected void setStatusDisplay(String strMessage) {
+	public void setStatusDisplay(String strMessage) {
 		statusDisplay.setText(strMessage);  
 	}
+	public JPanel getJpanelFields() {
+		return jpanelFields;
+	}
+	public void setJpanelFields(JPanel jpanelFields) {
+		this.jpanelFields = jpanelFields;
+	}
+	public JPanel getJpanelButtons() {
+		return jpanelButtons;
+	}
+	public void setJpanelButtons(JPanel jpanelButtons) {
+		this.jpanelButtons = jpanelButtons;
+	}
+	public CustomListModel getListModel() {
+		return listModel;
+	}
+	
+
+	
 	
 }
