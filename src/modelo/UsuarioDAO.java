@@ -1,46 +1,110 @@
 package modelo;
 
-public class UsuarioDAO {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-	public void listUsuarios() throws Exception
-	{}
-	public void altaUsuario(UsuarioDTO usuarioDTO) throws Exception
-	{
-		try
-		{
-			//alta usuario			
-		}
-		catch(Exception e)
-		{
-		  //
-		}
-		
-	
-		
+import codigonuevo.Imanager;
+import codigonuevo.TextDatabase;
+
+public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
+
+	private HashMap<String, UsuarioDTO> usuarios = new HashMap<>();
+
+	public UsuarioDAO() {
+
+		usuarios = load("UsuarioDTO");// Pasamos el nombre del fichero
 	}
-	public void bajaUsuario(UsuarioDTO usuarioDTO) throws Exception
-	{
-		try
-		{
-			//baja usuario			
+
+	@Override // alta usuario
+	public void add(UsuarioDTO usuarioDTO) throws Exception {
+		try {
+			// Agregamos un usuario al hashmap
+			usuarios.put(usuarioDTO.getNombreUsuario(), usuarioDTO);
+
+//Guardar los datos 
+
+			save(usuarios);
+
+		} catch (Exception e) {
+			System.out.println("No se puede introducir el usuario. Ha habido un error.");
 		}
-		catch(Exception e)
-		{
-		  //
-		}
-		
-		
+
 	}
-	public void modificaUsuario(UsuarioDTO usuarioDTO) throws Exception
-	{
-		try
-		{
-			//modifica usuario			
+
+	@Override // bajaUsuario
+	public void delete(String userName) throws Exception {
+		try {
+			usuarios.remove(userName);
+			save(usuarios);
+		} catch (Exception e) {
+			System.out.println("No se puede borrar el usuario. Ha habido un error.");
 		}
-		catch(Exception e)
-		{
-		  //
-		}
-		
+
 	}
+
+	@Override
+	public void update(UsuarioDTO usuarioDTO) throws Exception {
+		try {
+			// modifica usuario
+			save(usuarios);
+		} catch (Exception e) {
+			//
+		}
+
+	}
+
+	// Propósito:
+	// Buscar la clave en el HashMap devolver el objeto person si existe
+
+	@Override
+	public UsuarioDTO search(String e) {
+
+		if (usuarios.containsKey(e)) {
+			// Si encontramos el elemento en la búsqueda devolvemos el elemento
+			return usuarios.get(e);
+		}
+		return null;
+	}
+
+	/*********************************************************/
+
+	@Override
+	public void print(UsuarioDTO e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public HashMap<String, UsuarioDTO> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UsuarioDTO> getList() {
+
+		// Examinar si es mejor devolver un hashmap
+
+		/*
+		 * Iterator<Map.Entry<String, UsuarioDTO>> it = persons.entrySet().iterator();
+		 * 
+		 * printHeader(); while (it.hasNext()) {
+		 * 
+		 * listFormat(it.next().getValue()); }
+		 */
+
+		ArrayList<UsuarioDTO> al = new ArrayList();
+
+		for (Map.Entry<String, UsuarioDTO> entry : usuarios.entrySet()) {
+
+			al.add(entry.getValue());
+		}
+
+		return al;
+
+	}
+
 }

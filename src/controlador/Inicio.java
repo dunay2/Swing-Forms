@@ -4,7 +4,6 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.BasicConfigurator;
 
-import codigonuevo.Ventana;
 import vista.FrmUsuario;
 
 public class Inicio {
