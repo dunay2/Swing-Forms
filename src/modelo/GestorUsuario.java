@@ -65,8 +65,9 @@ public class GestorUsuario implements IGestorUsuario {
 
 	@Override
 	public UsuarioDTO getUsuario(String nombreUsuario) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return usuarioDAO.search(nombreUsuario) ;
+
 	}
 	
 	@Override

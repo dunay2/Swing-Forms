@@ -120,6 +120,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 					break;
 
 				case "Search":
+					usuarioDTO = loadRecord();
 					buscarDatos(usuarioDTO);
 
 					break;
@@ -186,6 +187,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			IGestorUsuario gestorUsuario = new GestorUsuario();
 			auxUsuarioDTO = gestorUsuario.getUsuario(usuarioDTO.getNombreUsuario());
 
+			limpiaPantalla();
 			cargarCamposTexto(auxUsuarioDTO);
 
 			// TODO agregar lógica para gestionar el radiobutton
