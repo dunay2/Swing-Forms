@@ -2,6 +2,7 @@ package database;
 
 
 import java.util.HashMap;
+import java.util.SortedMap;
 
 /**
  *
@@ -11,8 +12,8 @@ import java.util.HashMap;
  */
 public interface IDatabase<T> {
 
-    void save(HashMap<String, T> e);
+    void save(SortedMap<String, T> e);
 
-    HashMap<String, T> load(String id);
+    SortedMap<String, T> load(String id);
 
 }

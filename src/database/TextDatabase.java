@@ -14,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.UsuarioDTO;
@@ -27,7 +29,7 @@ public class TextDatabase implements IDatabase {
 
 //Implementamos el método save para guardar objetos
 	@Override
-	public void save(HashMap hm) {
+	public void save(SortedMap hm) {
 
 		try {
 			FileOutputStream fout = null;
@@ -70,8 +72,9 @@ public class TextDatabase implements IDatabase {
 	}
 
 	@Override
-	public HashMap load(String fileName) {
-		HashMap<String, ?> e = new HashMap();
+	public SortedMap load(String fileName) {
+		SortedMap<String, ?> e= new TreeMap(); //= new SortedMap();
+				
 		FileInputStream file;
 		ObjectInputStream in;
 		fileName = fileName.concat(".data");
@@ -84,7 +87,7 @@ public class TextDatabase implements IDatabase {
 
 				in = new ObjectInputStream(file);
 
-				e = (HashMap<String, ?>) in.readObject();
+				e = (SortedMap<String, ?>) in.readObject();
 
 				file.close();
 

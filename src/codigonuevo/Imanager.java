@@ -2,6 +2,7 @@ package codigonuevo;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
 
 import modelo.UsuarioDTO;
 
@@ -26,7 +27,7 @@ public interface Imanager<T> {
     public void print(T e);
     
 
-    public HashMap<String, T> getAll();
+    public SortedMap<String, T> getAll();
 
     //Para actualizar los datos de una entidad
     public void update(T e) throws Exception;

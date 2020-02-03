@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,31 +28,22 @@ public class TextDatabase implements IDatabase {
 
 //Implementamos el método save para guardar objetos
 	@Override
-	public void save(HashMap hm) {
+	public void save(LinkedHashMap hm, String className) {
 
 		try {
 			FileOutputStream fout = null;
 
-//Capturar el tipo
-//Obtenemos el primer objeto para saber su tipo y guardar en su fichero
-			Iterator<Entry<String, Object>> it = hm.entrySet().iterator();
-//Tomamos el primer valor para conocer la clase hija que vamos a guardar
-			Entry<String, Object> ite = it.next();
-			Object objectType = ite.getValue();
 
-//Guardamos el nombre de la clase hija
-			String filename = objectType.getClass().getSimpleName();
 
-			// Convertimos el HashMap en el tipo que vamos a guardar			
-		
-			HashMap	hmfile = (HashMap<String, UsuarioDTO>) hm;
-		
-			
-			// TODO parametrizar entrada y tipo de clase? puede ser por reflection?
-			filename = filename.concat(".data");
+			// Convertimos el HashMap en el tipo que vamos a guardar
+
+			LinkedHashMap hmfile = (LinkedHashMap<String, UsuarioDTO>) hm;
+
+			// TODO parametrizar entrada y tipo de clase en properties con reflection
+			className = className.concat(".data");
 
 			try {
-				fout = new FileOutputStream(filename, false);
+				fout = new FileOutputStream(className, false);
 
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(TextDatabase.class.getName()).log(Level.SEVERE, null, ex);
@@ -70,8 +62,8 @@ public class TextDatabase implements IDatabase {
 	}
 
 	@Override
-	public HashMap load(String fileName) {
-		HashMap<String, ?> e = new HashMap();
+	public LinkedHashMap load(String fileName) {
+		LinkedHashMap<String, ?> e = new LinkedHashMap();
 		FileInputStream file;
 		ObjectInputStream in;
 		fileName = fileName.concat(".data");
@@ -84,7 +76,7 @@ public class TextDatabase implements IDatabase {
 
 				in = new ObjectInputStream(file);
 
-				e = (HashMap<String, ?>) in.readObject();
+				e = (LinkedHashMap<String, ?>) in.readObject();
 
 				file.close();
 

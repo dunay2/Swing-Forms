@@ -1,17 +1,17 @@
 package modelo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import codigonuevo.Imanager;
 import codigonuevo.TextDatabase;
 
 public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 
-	private HashMap<String, UsuarioDTO> usuarios = new HashMap<>();
+	private LinkedHashMap<String, UsuarioDTO> usuarios = new LinkedHashMap<String, UsuarioDTO>();
 
 	public UsuarioDAO() {
 
@@ -26,7 +26,7 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 
 //Guardar los datos 
 
-			save(usuarios);
+			save(usuarios, "UsuarioDTO");
 
 		} catch (Exception e) {
 			System.out.println("No se puede introducir el usuario. Ha habido un error.");
@@ -38,7 +38,8 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 	public void delete(String userName) throws Exception {
 		try {
 			usuarios.remove(userName);
-			save(usuarios);
+			 
+			save(usuarios, "UsuarioDTO");
 		} catch (Exception e) {
 			System.out.println("No se puede borrar el usuario. Ha habido un error.");
 		}
@@ -48,8 +49,12 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 	@Override
 	public void update(UsuarioDTO usuarioDTO) throws Exception {
 		try {
-			// modifica usuario
-			save(usuarios);
+			String key = usuarioDTO.getNombreUsuario();
+			if (usuarios.containsKey(key)) {
+				usuarios.put(key, usuarioDTO);
+			}
+
+			save(usuarios, "UsuarioDTO");
 		} catch (Exception e) {
 			//
 		}
@@ -78,7 +83,7 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 	}
 
 	@Override
-	public HashMap<String, UsuarioDTO> getAll() {
+	public SortedMap<String, UsuarioDTO> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

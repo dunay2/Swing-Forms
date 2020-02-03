@@ -6,7 +6,9 @@ package codigonuevo;
  * and open the template in the editor.
  */
 
-import java.util.HashMap;
+
+import java.util.LinkedHashMap;
+
 
 /**
  *
@@ -16,8 +18,8 @@ import java.util.HashMap;
  */
 public interface IDatabase<T> {
 
-    void save(HashMap<String, T> e);
+    void save(LinkedHashMap<String, T> e,String className);
 
-    HashMap<String, T> load(String id);
+    LinkedHashMap<String, T> load(String id);
 
 }
