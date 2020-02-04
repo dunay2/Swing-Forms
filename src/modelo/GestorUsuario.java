@@ -22,7 +22,6 @@ public class GestorUsuario implements IGestorUsuario {
 		try {
 			al=(ArrayList<UsuarioDTO>) usuarioDAO.getList();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return al;
@@ -45,7 +44,6 @@ public class GestorUsuario implements IGestorUsuario {
 		try {
 			usuarioDAO.delete (userName);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -57,7 +55,7 @@ public class GestorUsuario implements IGestorUsuario {
 		try {
 			usuarioDAO.update  (usuarioDTO);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 

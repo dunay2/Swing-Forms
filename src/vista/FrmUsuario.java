@@ -1,18 +1,14 @@
 package vista;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
@@ -28,6 +24,7 @@ import modelo.UsuarioDTO;
 import utilities.ProyectBundle;
 import utilities.ProyectLocale;
 
+@SuppressWarnings("serial")
 public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 	/*************************************************************
@@ -43,7 +40,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	private JFormattedTextField fechaBajaField;
 	private JComboBox<String> rolField;
 	private JList<UsuarioDTO> jlistaUsuarios;
-	private ButtonGroup buttonGroup;
 
 	static Logger logger = org.apache.log4j.Logger.getLogger(FrmUsuario.class);
 
@@ -101,6 +97,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			ProyectBundle.getInstance(accionSeleccionada);
 
 			ProyectLocale proyectLocale = new ProyectLocale();
+
 			proyectLocale.cambiarIdiomaTextos(getJpanelFields());
 			proyectLocale.cambiarIdiomaTextos(getJpanelButtons());
 
@@ -231,7 +228,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		logger.debug("***inicio metodo cargarCamposTexto***");
 
-		// TODO REVISAR ERROR EN CARGA DE IDIOMA CUANDO IDIOMA ES NULL
 		try {
 			usuarioField.setText(usuarioDTO.getNombreUsuario());
 			passwordField.setText(usuarioDTO.getPassword());
@@ -301,7 +297,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 				usuarioDTO.setFechaAlta(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
 
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -314,16 +309,14 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			try {
 
 				usuarioDTO.setFechaBaja(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
+
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
 
 		usuarioDTO.setCarpetaDoc(carpetaField.getText());
-
-		// TODO COMPROBAR IDIOMA EN CREACION
 
 		if (!idiomaField.getText().isEmpty()) {
 			usuarioDTO.setIdioma(idiomaField.getText().toCharArray());
@@ -362,6 +355,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			sDate2 = sDate2.replaceAll("/", "").trim();
 			if (sDate2.length() > 0) {
 				try {
+					@SuppressWarnings("unused")
 					Date d = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
 
 				} catch (ParseException e) {
@@ -388,16 +382,18 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		if (usuarioField.getText().isEmpty() || passwordField.getText().isEmpty()) {
 
+			setStatusDisplay(getMANDATORY_FIELDS_MSG());
+
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
-			// TODO
-			/* ENVIAR MENSAJES A CONSOLA */
+
 		}
 
 		if (usuarioField.getText().trim().equals("") || passwordField.getText().trim().equals("")) {
 
 			setStatusDisplay(getMANDATORY_FIELDS_MSG());
+
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
-			
+
 		}
 
 		try {
@@ -411,17 +407,19 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			}
 
 			if (!(fechaBajaField.getText().isEmpty())) {
+
 				date = new SimpleDateFormat("dd/MM/yyyy").parse(fechaBajaField.getText());
 			}
 
 		} catch (Exception e) {
+
 			setStatusDisplay(getINVALID_DATE_MSG());
+
 			throw new EX_INVALID_DATE(getINVALID_DATE_MSG());
 		}
-		;
 
 		setStatusDisplay("*****Usuario validado******");
-		
+
 		return true;
 
 	}
@@ -440,6 +438,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		return usuarioDTO;
 	}
+
 
 	/*****
 	 * Agrega un elemento a la lista mediante el uso del modelo subyacente
@@ -464,10 +463,8 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		customListModel.removeUsuario(userName);
 
 	}
-	//TODO No crear usuario duplicado
-	
-	//TODO No guardar sino hay clave. Al tomar un registro existente, borrar la clave y guardar
-	
-	//TODO Inclur navegacion
+	// TODO No crear usuario duplicado en lista y mostrar mensaje usuario ya existe.
+
+	// TODO Incluir navegacion
 
 }

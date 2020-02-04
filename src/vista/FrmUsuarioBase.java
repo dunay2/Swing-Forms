@@ -3,12 +3,10 @@ package vista;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.ResourceBundle;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -28,9 +26,9 @@ import helpers.CreateRadioButtonHelper;
 import modelo.UsuarioDTO;
 import utilities.ProyectBundle;
 
-public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListener, IFormulario<UsuarioDTO> {
+@SuppressWarnings("serial")
+public abstract class FrmUsuarioBase<T> extends JPanel implements ActionListener, IFormulario<UsuarioDTO> {
 
-	private Font regularFont,italicFont;
 	private JLabel statusDisplay;
 	// TODO elegir idioma en conexión
 	private ResourceBundle rb;
@@ -44,7 +42,6 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 	private JPanel jpanelRadioButtons;
 
 	private JList<UsuarioDTO> jlistaUsuarios;
-	
 
 	protected abstract T loadRecord() throws Exception;
 
@@ -82,6 +79,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 		// Se asocia los objetos jpanelFields a las variables privadas de las clases de
 		// herencia
+		@SuppressWarnings("rawtypes")
 		Class<? extends FrmUsuarioBase> currentClass = getClass();
 		Field[] fields = currentClass.getDeclaredFields();
 		boolean foundFlag = false;
@@ -98,7 +96,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 				foundFlag = true;
 			} else if ((allTextfields[i] instanceof JComboBox)) {
 				// aislamos el objeto
-				tf = (JComboBox) allTextfields[i];
+				tf = (JComboBox<?>) allTextfields[i];
 				foundFlag = true;
 			}
 
@@ -121,22 +119,22 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		}
 
 		leftHalf.add(jpanelFields);
-		
-		jpanelRadioButtons=(JPanel) new CreateRadioButtonHelper().createRadioButtons(this);
-		
+
+		jpanelRadioButtons = (JPanel) new CreateRadioButtonHelper().createRadioButtons(this);
+
 		leftHalf.add(jpanelRadioButtons);
-		jpanelButtons = new CreateButtonHelper().createButtons(this);		
+		jpanelButtons = new CreateButtonHelper().createButtons(this);
 		leftHalf.add(jpanelButtons);
-		
+
 		add(leftHalf);
 		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
 		add(createInfoDisplay());
 		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
 
-
 	}
 
 //Panel derecho
+	@SuppressWarnings("unchecked")
 	public JComponent createInfoDisplay() {
 		JPanel panel = new JPanel(new BorderLayout());
 		CustomListModel listModel = new CustomListModel();
@@ -151,9 +149,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 		statusDisplay = new JLabel();
 		statusDisplay.setHorizontalAlignment(JLabel.CENTER);
-		regularFont = statusDisplay.getFont().deriveFont(Font.PLAIN, 16.0f);
-		italicFont = regularFont.deriveFont(Font.ITALIC);
-
+		
 		// Lay out the panel.
 		panel.setBorder(BorderFactory.createEmptyBorder(GAP / 2, // top
 				0, // left
@@ -207,14 +203,14 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		return jlistaUsuarios;
 	}
 
-	 protected void limpiaPantalla() {
+	protected void limpiaPantalla() {
 
 		// Se asocia los objetos jpanelFields a las variables privadas de las clases de
 
-		 // herencia
-		 
-		 Component[] allTextfields=jpanelFields.getComponents();
-		 
+		// herencia
+
+		Component[] allTextfields = jpanelFields.getComponents();
+
 		for (int i = 0; i < allTextfields.length; i++) {
 			// casteamos al tipo adecuado y buscamos en el form
 			if ((allTextfields[i] instanceof JTextField)) {
@@ -234,20 +230,10 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		}
 	}
 
-	//public JPanel jpanelRadioButtons {
-	//	return jpanelRadioButtons;
-	//}
-
-	//public void setJpanelRadioButtons(JPanel jpanelRadioButtons) {
-		//this.jpanelRadioButtons = jpanelRadioButtons;
-	//}
-
 	protected JRadioButton getLangRadioButton(String strIdioma) {
-		
-		//TODO RECORRER PARA IDENTIFICAR EL IDIOMA
+
+		// TODO RECORRER PARA IDENTIFICAR EL IDIOMA
 		JRadioButton jRadioButton = null;
-		
-		
 
 		switch (strIdioma) {
 		case "EN":
@@ -268,37 +254,31 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		default:
 			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(0);
 		}
-		
+
 		return jRadioButton;
 
 	}
-	
+
 	protected void setNullRadioButton() {
-		//TODO VALIDAR SELECCION CORRECTA DE BOTONERA
+
 		Component[] jComponent = jpanelRadioButtons.getComponents();
 
 		JRadioButton jRadioButton = null;
-		
-		
+
 		for (int i = 0; i < jComponent.length; i++) {
-			
-			if (jComponent[i] instanceof JRadioButton )
-			{
-				jRadioButton = (JRadioButton)jComponent[i];
-				if (jRadioButton.getName().equals("NONE"))
-				{
+
+			if (jComponent[i] instanceof JRadioButton) {
+				jRadioButton = (JRadioButton) jComponent[i];
+				if (jRadioButton.getName().equals("NONE")) {
 					jRadioButton.setSelected(true);
 					System.out.println("Establecido selected false: nombre radio en panel " + jComponent[i].getName());
 					break;
-	
+
 				}
-								
+
 			}
-						
+
 		}
 
-
-
-	
-}
+	}
 }

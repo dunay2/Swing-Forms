@@ -53,8 +53,10 @@ public class CreateRadioButtonHelper {
 		rdbtnFrench.setName("FR");
 		rdbtnFrench.addActionListener(acListener);
 		
-		
+		rdbtnNone.setActionCommand("NONE");
 		rdbtnNone.setName("NONE");
+		rdbtnNone.addActionListener(acListener);
+		
 
 		// añadir al grupo
 		G.add(rdbtnEnglish);
