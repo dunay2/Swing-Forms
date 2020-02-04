@@ -17,6 +17,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -120,10 +121,10 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		}
 
 		leftHalf.add(jpanelFields);
-
-		setJpanelRadioButtons((JPanel) new CreateRadioButtonHelper().createRadioButtons(this));
 		
-		leftHalf.add(getJpanelRadioButtons());
+		jpanelRadioButtons=(JPanel) new CreateRadioButtonHelper().createRadioButtons(this);
+		
+		leftHalf.add(jpanelRadioButtons);
 		jpanelButtons = new CreateButtonHelper().createButtons(this);		
 		leftHalf.add(jpanelButtons);
 		
@@ -221,23 +222,83 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 				JTextField jTextField = (JTextField) allTextfields[i];
 				jTextField.setText("");
+				System.out.println("borrado campo " + jTextField.getName());
 
 			} else if ((allTextfields[i] instanceof JFormattedTextField)) {
 				// aislamos el objeto
 				JFormattedTextField jFormattedTextField = (JFormattedTextField) allTextfields[i];
 				jFormattedTextField.setText("");
+				System.out.println("borrado campo " + jFormattedTextField.getName());
 
 			}
 		}
 	}
 
-	public JPanel getJpanelRadioButtons() {
-		return jpanelRadioButtons;
+	//public JPanel jpanelRadioButtons {
+	//	return jpanelRadioButtons;
+	//}
+
+	//public void setJpanelRadioButtons(JPanel jpanelRadioButtons) {
+		//this.jpanelRadioButtons = jpanelRadioButtons;
+	//}
+
+	protected JRadioButton getLangRadioButton(String strIdioma) {
+		
+		//TODO RECORRER PARA IDENTIFICAR EL IDIOMA
+		JRadioButton jRadioButton = null;
+		
+		
+
+		switch (strIdioma) {
+		case "EN":
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(0);
+			break;
+		case "ES":
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(1);
+			break;
+		case "GE":
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(2);
+			break;
+		case "FR":
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(3);
+			break;
+		case "":
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(4);
+			break;
+		default:
+			jRadioButton = (JRadioButton) jpanelRadioButtons.getComponent(0);
+		}
+		
+		return jRadioButton;
+
 	}
+	
+	protected void setNullRadioButton() {
+		//TODO VALIDAR SELECCION CORRECTA DE BOTONERA
+		Component[] jComponent = jpanelRadioButtons.getComponents();
 
-	public void setJpanelRadioButtons(JPanel jpanelRadioButtons) {
-		this.jpanelRadioButtons = jpanelRadioButtons;
-	}
+		JRadioButton jRadioButton = null;
+		
+		
+		for (int i = 0; i < jComponent.length; i++) {
+			
+			if (jComponent[i] instanceof JRadioButton )
+			{
+				jRadioButton = (JRadioButton)jComponent[i];
+				if (jRadioButton.getName().equals("NONE"))
+				{
+					jRadioButton.setSelected(true);
+					System.out.println("Establecido selected false: nombre radio en panel " + jComponent[i].getName());
+					break;
+	
+				}
+								
+			}
+						
+		}
 
 
+
+	
+}
 }

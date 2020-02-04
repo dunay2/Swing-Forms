@@ -46,12 +46,11 @@ public class CustomListModel extends AbstractListModel {
 		this.fireIntervalAdded(this, getSize(), getSize() + 1);
 	}
 
-	public void removeUsuario(UsuarioDTO usuarioDTO) {
-		String name = usuarioDTO.getNombreUsuario();
-
+	public void removeUsuario(String userName) {
+		
 		int size = lista.size();
 		for (int i = 0; i < size; i++) {
-			if (this.getElementAt(i).equals(name)) {
+			if (this.getElementAt(i).equals(userName)) {
 				lista.remove(i);
 				fireIntervalRemoved(this, i, i);
 				break;

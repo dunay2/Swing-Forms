@@ -44,7 +44,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	private JComboBox<String> rolField;
 	private JList<UsuarioDTO> jlistaUsuarios;
 	private ButtonGroup buttonGroup;
-	
 
 	static Logger logger = org.apache.log4j.Logger.getLogger(FrmUsuario.class);
 
@@ -58,15 +57,22 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 			@Override
 			public void valueChanged(ListSelectionEvent evt) {
-				UsuarioDTO currentRecod = new UsuarioDTO();
-				CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
 
-				int idx = jlistaUsuarios.getSelectedIndex();
-				if (idx != -1)
+				if (!(evt.getValueIsAdjusting())) {
+					UsuarioDTO currentRecod = new UsuarioDTO();
+					CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
 
-					currentRecod = cl.getUsuarioDTO(idx);
-				cargarCamposTexto(currentRecod);
-				System.out.println("Current selection: " + idx);
+					int idx = jlistaUsuarios.getSelectedIndex();
+					if (idx != -1)
+
+						currentRecod = cl.getUsuarioDTO(idx);
+
+					logger.debug(evt.toString());
+
+					logger.debug("***llamada a   metodo cargarCamposTexto desde evento lista***");
+					cargarCamposTexto(currentRecod);
+
+				}
 
 			}
 
@@ -107,7 +113,9 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			try {
 
 				switch (accionSeleccionada) {
+
 				case "Create":
+
 					usuarioDTO = loadRecord();
 					validateRecord();
 					crearDatos(usuarioDTO);
@@ -116,31 +124,36 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 					break;
 
 				case "Delete":
-					usuarioDTO = loadRecord();
-					borrarDatos(usuarioField.getText());
-					BorrarUsuarioDeLista(usuarioDTO);
 
+					borrarDatos(usuarioField.getText());
+					BorrarUsuarioDeLista(usuarioField.getText());
 					limpiaPantalla();
 
 					break;
 
 				case "Search":
+
 					usuarioDTO = loadRecord();
 					buscarDatos(usuarioDTO);
 
 					break;
 
 				case "Modify":
+
 					validateRecord();
 					usuarioDTO = loadRecord();
 					modificarDatos(usuarioDTO);
+
 					break;
 
 				case "CreateRandomUser":
+
 					CreateRandomUser();
 					usuarioDTO = loadRecord();
 					crearDatos(usuarioDTO);
 					agregarUsuarioALista(usuarioDTO);
+
+					break;
 
 				}
 
@@ -199,7 +212,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			limpiaPantalla();
 			cargarCamposTexto(auxUsuarioDTO);
 
-			
 		} catch (Exception actionException) {
 			logger.error(actionException.getMessage());
 		}
@@ -217,87 +229,50 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 	private void cargarCamposTexto(UsuarioDTO usuarioDTO) {
 
+		logger.debug("***inicio metodo cargarCamposTexto***");
+
+		// TODO REVISAR ERROR EN CARGA DE IDIOMA CUANDO IDIOMA ES NULL
 		try {
 			usuarioField.setText(usuarioDTO.getNombreUsuario());
 			passwordField.setText(usuarioDTO.getPassword());
 			rolField.setSelectedIndex(usuarioDTO.getCodigoRol());
 
-			fechaAltaField.setText(new SimpleDateFormat("dd/MM/yyyy").format(usuarioDTO.getFechaAlta()));
+			if (!(usuarioDTO.getFechaAlta() == null)) {
+				fechaAltaField.setText(new SimpleDateFormat("dd/MM/yyyy").format(usuarioDTO.getFechaAlta()));
+			} else {
+				fechaAltaField.setText("");
+			}
 
-			if (usuarioDTO.getFechaBaja() == null)
-				fechaBajaField.setText("");
-			else {
+			if (!(usuarioDTO.getFechaBaja() == null)) {
 				fechaBajaField.setText(usuarioDTO.getFechaBaja().toString());
 			}
 
-			carpetaField.setText(usuarioDTO.getCarpetaDoc());
-			
-			String strIdioma=new String (usuarioDTO.getIdioma());
-			idiomaField.setText(strIdioma);
-			
-			if (!strIdioma.isEmpty())
-			{
-				JRadioButton jRadioButton = null;
-				switch (strIdioma)
-				{
-				case "EN":
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(0);
-					break;
-				case "ES":
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(1);
-					break;
-				case "GE":
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(2);
-					break;
-				case "FR":
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(3);
-					break;
-				}
-				
-				jRadioButton.setSelected(true);
-				//jbutton.isSelected();
-							
-			}
-			else
-			{
-				Component[] jComponent= getJpanelRadioButtons().getComponents();
-				
-				JRadioButton jRadioButton=null;
-				for (int i=0;i<4;i++)
-				{
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(i);
-					jRadioButton.setSelected(false);	
-					
-				System.out.println("nombre radio en panel " +	getJpanelRadioButtons().getComponent(i).getName() ); 
-				}
-				
-				for (int i=0;i<4;i++)
-				{
-					jRadioButton=(JRadioButton) jComponent[i];
-					
-					jRadioButton=(JRadioButton) getJpanelRadioButtons().getComponent(i);
-					jRadioButton.setSelected(false);
-					jRadioButton=null;
-					
-				System.out.println("nombre del radio " + jRadioButton.getName() ); 
-				}
-				
-				
+			else {
+				fechaBajaField.setText("");
 			}
 
-			
-			
-			//ButtonGroup= (JRadioButton[]) getJpanelRadioButtons().getComponents();
-			
-			//buttonGroup.getSelection();
-			
-			//components[0].getText();
-			//System.out.println("valor de com "  + components[0].getText());
-			
+			carpetaField.setText(usuarioDTO.getCarpetaDoc());
+
+			if (!(usuarioDTO.getIdioma() == null)) {
+
+				String strIdioma = new String(usuarioDTO.getIdioma());
+				if (!(strIdioma.isEmpty())) {
+
+					idiomaField.setText(strIdioma);
+
+					getLangRadioButton(strIdioma).setSelected(true);
+
+				}
+			} else {
+				idiomaField.setText("");
+				setNullRadioButton();
+
+			}
+
 		} catch (Exception actionException) {
 			logger.error(actionException.getMessage());
 		}
-
+		logger.debug("***fin metodo cargarCamposTexto***");
 	}
 
 	/**********************************************
@@ -308,7 +283,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		String sDate;
 
-		logger.debug("inicio loadRecord");
+		logger.debug("***inicio metodo loadRecord***");
 
 		// Se crea una instancia del bean usuario
 		UsuarioDTO usuarioDTO = new UsuarioDTO();
@@ -317,22 +292,30 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		usuarioDTO.setPassword(passwordField.getText());
 		usuarioDTO.setCodigoRol(Integer.parseInt(rolField.getSelectedItem().toString()));
 
-		if (!(fechaAltaField.getText().isEmpty())) {
+		sDate = fechaAltaField.getText();
 
-			sDate = fechaAltaField.getText();
+		if (checkDate(sDate)) {
+
 			try {
+
 				usuarioDTO.setFechaAlta(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
+
 			} catch (ParseException e) {
-			
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 
-		if (!(fechaBajaField.getText().isEmpty())) {
-			sDate = fechaBajaField.getText();
+		sDate = fechaBajaField.getText();
+
+		if (checkDate(sDate)) {
+
 			try {
+
 				usuarioDTO.setFechaBaja(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
 			} catch (ParseException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -340,7 +323,12 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		usuarioDTO.setCarpetaDoc(carpetaField.getText());
 
-		usuarioDTO.setIdioma(idiomaField.getText().toCharArray());
+		// TODO COMPROBAR IDIOMA EN CREACION
+
+		if (!idiomaField.getText().isEmpty()) {
+			usuarioDTO.setIdioma(idiomaField.getText().toCharArray());
+
+		}
 
 		// DEBUG***************************
 		logger.debug("*****Se muestra los datos de usuario capturados");
@@ -358,6 +346,40 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		return usuarioDTO;
 	}
 
+	/**
+	 * Comprobar fecha
+	 * 
+	 */
+	private boolean checkDate(String sDate) {
+		boolean error = false;
+
+		if (sDate.isEmpty()) {
+			error = true;
+		}
+
+		if (!(error)) {
+			String sDate2 = sDate;
+			sDate2 = sDate2.replaceAll("/", "").trim();
+			if (sDate2.length() > 0) {
+				try {
+					Date d = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+
+				} catch (ParseException e) {
+					error = true;
+					// TODO
+
+					// MENSAJE DE FECHA NO VALIDA
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+
+		return !error;
+
+	}
+
 	/********************************************
 	 * Lista de reglas de validacion *
 	 * 
@@ -367,28 +389,39 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		if (usuarioField.getText().isEmpty() || passwordField.getText().isEmpty()) {
 
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
+			// TODO
+			/* ENVIAR MENSAJES A CONSOLA */
 		}
 
 		if (usuarioField.getText().trim().equals("") || passwordField.getText().trim().equals("")) {
 
+			setStatusDisplay(getMANDATORY_FIELDS_MSG());
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
+			
 		}
 
 		try {
-			
+
 			@SuppressWarnings("unused")
 			Date date = null;
 
-			if (!(fechaAltaField.getText().isEmpty()))
+			if (!(fechaAltaField.getText().isEmpty())) {
+
 				date = new SimpleDateFormat("dd/MM/yyyy").parse(fechaAltaField.getText());
-			if (!(fechaBajaField.getText().isEmpty()))
+			}
+
+			if (!(fechaBajaField.getText().isEmpty())) {
 				date = new SimpleDateFormat("dd/MM/yyyy").parse(fechaBajaField.getText());
+			}
+
 		} catch (Exception e) {
+			setStatusDisplay(getINVALID_DATE_MSG());
 			throw new EX_INVALID_DATE(getINVALID_DATE_MSG());
 		}
 		;
 
-		logger.debug("*****Usuario validado******");
+		setStatusDisplay("*****Usuario validado******");
+		
 		return true;
 
 	}
@@ -424,12 +457,17 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	 * subyacente
 	 * 
 	 */
-	private void BorrarUsuarioDeLista(UsuarioDTO usuarioDTO) {
+	private void BorrarUsuarioDeLista(String userName) {
 
 		CustomListModel customListModel = (CustomListModel) jlistaUsuarios.getModel();
 
-		customListModel.removeUsuario(usuarioDTO);
-		
+		customListModel.removeUsuario(userName);
+
 	}
+	//TODO No crear usuario duplicado
+	
+	//TODO No guardar sino hay clave. Al tomar un registro existente, borrar la clave y guardar
+	
+	//TODO Inclur navegacion
 
 }
