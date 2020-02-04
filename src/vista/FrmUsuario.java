@@ -361,8 +361,8 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 				} catch (ParseException e) {
 					error = true;
 					// TODO
-
-					// MENSAJE DE FECHA NO VALIDA
+					//incluir MENSAJE DE FECHA NO VALIDA
+					
 					e.printStackTrace();
 				}
 
@@ -465,6 +465,6 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	}
 	// TODO No crear usuario duplicado en lista y mostrar mensaje usuario ya existe.
 
-	// TODO Incluir navegacion
+	// TODO Incluir navegacion bloqueando botones
 
 }

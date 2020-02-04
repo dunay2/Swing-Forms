@@ -1,7 +1,5 @@
 package helpers;
 
-import java.util.ResourceBundle;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;

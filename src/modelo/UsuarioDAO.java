@@ -13,6 +13,7 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 
 	private LinkedHashMap<String, UsuarioDTO> usuarios = new LinkedHashMap<String, UsuarioDTO>();
 
+	@SuppressWarnings("unchecked")
 	public UsuarioDAO() {
 
 		usuarios = load("UsuarioDTO");// Pasamos el nombre del fichero
@@ -101,7 +102,7 @@ public class UsuarioDAO extends TextDatabase implements Imanager<UsuarioDTO> {
 		 * listFormat(it.next().getValue()); }
 		 */
 
-		ArrayList<UsuarioDTO> al = new ArrayList();
+		ArrayList<UsuarioDTO> al = new ArrayList<UsuarioDTO>();
 
 		for (Map.Entry<String, UsuarioDTO> entry : usuarios.entrySet()) {
 

@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -34,6 +33,9 @@ public class TextDatabase implements IDatabase {
 		try {
 			FileOutputStream fout = null;
 
+			//TODO
+			//comprobar si guarda cuando no hay objetos en la lista
+			
 //Capturar el tipo
 //Obtenemos el primer objeto para saber su tipo y guardar en su fichero
 			Iterator<Entry<String, Object>> it = hm.entrySet().iterator();
@@ -44,9 +46,12 @@ public class TextDatabase implements IDatabase {
 //Guardamos el nombre de la clase hija
 			String filename = objectType.getClass().getSimpleName();
 
-			// Convertimos el HashMap en el tipo que vamos a guardar			
-		
-			HashMap	hmfile = (HashMap<String, UsuarioDTO>) hm;
+			// Convertimos el Map en el tipo que vamos a guardar			
+
+			//TODO
+			//El tipo a guardar debe ser generico, nada de UsuarioDTO
+			
+			SortedMap	hmfile = (SortedMap<String, UsuarioDTO>) hm;
 		
 			
 			// TODO parametrizar entrada y tipo de clase? puede ser por reflection?
@@ -72,7 +77,7 @@ public class TextDatabase implements IDatabase {
 	}
 
 	@Override
-	public SortedMap load(String fileName) {
+	public SortedMap<String, ?> load(String fileName) {
 		SortedMap<String, ?> e= new TreeMap(); //= new SortedMap();
 				
 		FileInputStream file;

@@ -8,6 +8,7 @@ import modelo.GestorUsuario;
 import modelo.IGestorUsuario;
 import modelo.UsuarioDTO;
 
+@SuppressWarnings({ "serial", "rawtypes" })
 public class CustomListModel extends AbstractListModel {
 
 	private ArrayList<UsuarioDTO> lista = new ArrayList<>();
