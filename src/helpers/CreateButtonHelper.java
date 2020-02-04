@@ -2,8 +2,9 @@ package helpers;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
+
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -14,8 +15,7 @@ import utilities.ProyectBundle;
  * */
 public class CreateButtonHelper {
 
-	private ProyectBundle rb;
-
+	
 	public JPanel createButtons(ActionListener actionListener) {
 
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -39,5 +39,5 @@ public class CreateButtonHelper {
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 0, GAP - 5, GAP - 5));
 		return panel;
 	}
-
+	
 }

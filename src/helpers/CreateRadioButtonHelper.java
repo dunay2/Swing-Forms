@@ -21,6 +21,7 @@ public class CreateRadioButtonHelper {
 		JRadioButton rdbtnEnglish;
 		JRadioButton rdbtnGerman;
 		JRadioButton rdbtnFrench;
+		JRadioButton rdbtnNone;
 
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
@@ -32,30 +33,42 @@ public class CreateRadioButtonHelper {
 		rdbtnEspa = new JRadioButton("Espa\u00F1ol");
 		rdbtnGerman = new JRadioButton("German");
 		rdbtnFrench = new JRadioButton("French");
+		rdbtnNone = new JRadioButton("None");
+		
 
 		//Habilitar eventos y agregar la acción 
 		rdbtnEnglish.setActionCommand("EN");
+		rdbtnEnglish.setName("EN");
 		rdbtnEnglish.addActionListener(acListener);
 
 		rdbtnEspa.setActionCommand("ES");
+		rdbtnEspa.setName("ES");
 		rdbtnEspa.addActionListener(acListener);
 
 		rdbtnGerman.setActionCommand("GE");
+		rdbtnGerman.setName("GE");
 		rdbtnGerman.addActionListener(acListener);
 
 		rdbtnFrench.setActionCommand("FR");
+		rdbtnFrench.setName("FR");
 		rdbtnFrench.addActionListener(acListener);
+		
+		
+		rdbtnNone.setName("NONE");
 
 		// añadir al grupo
 		G.add(rdbtnEnglish);
 		G.add(rdbtnEspa);
 		G.add(rdbtnGerman);
 		G.add(rdbtnFrench);
+		G.add(rdbtnNone);
 
 		panel.add(rdbtnEnglish);
 		panel.add(rdbtnEspa);
 		panel.add(rdbtnGerman);
 		panel.add(rdbtnFrench);
+		panel.add(rdbtnNone);
+		
 
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 0, GAP - 5, GAP - 5));
 		return panel;

@@ -1,19 +1,25 @@
 package vista;
 
 import java.awt.Component;
-import java.awt.event.*;
-import java.lang.reflect.Field;
+import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.*;
-import javax.swing.event.AncestorListener;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+
 import exception.EX_INVALID_DATE;
 import exception.EX_MANDATORY_FIELDS;
 import modelo.GestorUsuario;
@@ -21,11 +27,6 @@ import modelo.IGestorUsuario;
 import modelo.UsuarioDTO;
 import utilities.ProyectBundle;
 import utilities.ProyectLocale;
-
-/**
- * Based on TextInputDemo.java uses these additional files: SpringUtilities.java
- * ...
- */
 
 public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
@@ -42,25 +43,36 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	private JFormattedTextField fechaBajaField;
 	private JComboBox<String> rolField;
 	private JList<UsuarioDTO> jlistaUsuarios;
+	private ButtonGroup buttonGroup;
 
 	static Logger logger = org.apache.log4j.Logger.getLogger(FrmUsuario.class);
 
+	/**
+	 * Constructor: se agrega un gestor de eventos a la lista de usuarios
+	 */
 	public FrmUsuario() {
-		jlistaUsuarios = getListaUsuarios();
 
+		jlistaUsuarios = getListaUsuarios();
 		jlistaUsuarios.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent evt) {
-				UsuarioDTO currentRecod = new UsuarioDTO();
-				CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
 
-				int idx = jlistaUsuarios.getSelectedIndex();
-				if (idx != -1)
+				if (!(evt.getValueIsAdjusting())) {
+					UsuarioDTO currentRecod = new UsuarioDTO();
+					CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
 
-					currentRecod = cl.getUsuarioDTO(idx);
-				cargarCamposTexto(currentRecod);
-				System.out.println("Current selection: " + idx);
+					int idx = jlistaUsuarios.getSelectedIndex();
+					if (idx != -1)
+
+						currentRecod = cl.getUsuarioDTO(idx);
+
+					logger.debug(evt.toString());
+
+					logger.debug("***llamada a   metodo cargarCamposTexto desde evento lista***");
+					cargarCamposTexto(currentRecod);
+
+				}
 
 			}
 
@@ -72,39 +84,38 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		System.out.println("valor select");
 	}
 
-//TODO  
-	/*
-	 * GESTIONAR RADIO BUTTONS AL REALIZAR CARGA GUARDAR DATOS EN DISCO LEER DATOS
-	 * DE DISCO A LISTA SELECCIONAR DE LISTA Y CARGAR EN FORM BORRAR POR NOMBRE
-	 * MODIFICAR POR NOMBRE
-	 */
 	/*********************************************
 	 * Gestion de eventos *
+	 * 
 	 ********************************************/
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent event) {
 
-		setStatusDisplay(e.getActionCommand());
+		setStatusDisplay(event.getActionCommand());
 
-		String accionSeleccionada = e.getActionCommand();
+		String accionSeleccionada = event.getActionCommand();
 
-		logger.debug(e.getSource().toString());
+		logger.debug(event.getSource().toString());
 
 		// tratamiento de radio options
-		if (e.getSource() instanceof JRadioButton) {
+		if (event.getSource() instanceof JRadioButton) {
 			ProyectBundle.getInstance(accionSeleccionada);
 
-			ProyectLocale c = new ProyectLocale();
-			c.cambiarIdiomaTextos(getJpanelFields());
-			c.cambiarIdiomaTextos(getJpanelButtons());
+			ProyectLocale proyectLocale = new ProyectLocale();
+			proyectLocale.cambiarIdiomaTextos(getJpanelFields());
+			proyectLocale.cambiarIdiomaTextos(getJpanelButtons());
+
+			idiomaField.setText(accionSeleccionada);
 
 		}
 		// tratamiento de acciones de boton
 		UsuarioDTO usuarioDTO = null;
-		if (e.getSource() instanceof JButton) {
+		if (event.getSource() instanceof JButton) {
 			try {
 
 				switch (accionSeleccionada) {
+
 				case "Create":
+
 					usuarioDTO = loadRecord();
 					validateRecord();
 					crearDatos(usuarioDTO);
@@ -113,29 +124,36 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 					break;
 
 				case "Delete":
-					usuarioDTO = loadRecord();
+
 					borrarDatos(usuarioField.getText());
-					BorrarUsuarioDeLista(usuarioDTO);
+					BorrarUsuarioDeLista(usuarioField.getText());
 					limpiaPantalla();
+
 					break;
 
 				case "Search":
+
 					usuarioDTO = loadRecord();
 					buscarDatos(usuarioDTO);
 
 					break;
 
 				case "Modify":
+
 					validateRecord();
 					usuarioDTO = loadRecord();
 					modificarDatos(usuarioDTO);
+
 					break;
 
 				case "CreateRandomUser":
+
 					CreateRandomUser();
 					usuarioDTO = loadRecord();
 					crearDatos(usuarioDTO);
 					agregarUsuarioALista(usuarioDTO);
+
+					break;
 
 				}
 
@@ -150,6 +168,10 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 	}
 
+	/************************************************************
+	 * Implementaciones de la interfaz*
+	 *
+	 ***********************************************************/
 	/* crear registro */
 	@Override
 	public void crearDatos(UsuarioDTO usuarioDTO) {
@@ -190,47 +212,78 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 			limpiaPantalla();
 			cargarCamposTexto(auxUsuarioDTO);
 
-			// TODO agregar lógica para gestionar el radiobutton
 		} catch (Exception actionException) {
 			logger.error(actionException.getMessage());
 		}
 	}
 
-//Carga los datos del usuario en pantalla 
-	private void cargarCamposTexto(UsuarioDTO usuarioDTO)
+	/************************************************************
+	 * Fin Implementaciones de la interfaz*
+	 *
+	 ***********************************************************/
 
-	{
+	/**********************************************
+	 * Carga en los campos del formulario el DTO
+	 * 
+	 *********************************************/
 
+	private void cargarCamposTexto(UsuarioDTO usuarioDTO) {
+
+		logger.debug("***inicio metodo cargarCamposTexto***");
+
+		// TODO REVISAR ERROR EN CARGA DE IDIOMA CUANDO IDIOMA ES NULL
 		try {
 			usuarioField.setText(usuarioDTO.getNombreUsuario());
 			passwordField.setText(usuarioDTO.getPassword());
 			rolField.setSelectedIndex(usuarioDTO.getCodigoRol());
 
-			fechaAltaField.setText(new SimpleDateFormat("dd/MM/yyyy").format(usuarioDTO.getFechaAlta()));
+			if (!(usuarioDTO.getFechaAlta() == null)) {
+				fechaAltaField.setText(new SimpleDateFormat("dd/MM/yyyy").format(usuarioDTO.getFechaAlta()));
+			} else {
+				fechaAltaField.setText("");
+			}
 
-			if (usuarioDTO.getFechaBaja() == null)
-				fechaBajaField.setText("");
-			else {
+			if (!(usuarioDTO.getFechaBaja() == null)) {
 				fechaBajaField.setText(usuarioDTO.getFechaBaja().toString());
 			}
 
+			else {
+				fechaBajaField.setText("");
+			}
+
 			carpetaField.setText(usuarioDTO.getCarpetaDoc());
-			// idiomaField.setText(usuarioDTO.getIdioma().toString());
-			// TODO agregar lógica para gestionar el radiobutton
+
+			if (!(usuarioDTO.getIdioma() == null)) {
+
+				String strIdioma = new String(usuarioDTO.getIdioma());
+				if (!(strIdioma.isEmpty())) {
+
+					idiomaField.setText(strIdioma);
+
+					getLangRadioButton(strIdioma).setSelected(true);
+
+				}
+			} else {
+				idiomaField.setText("");
+				setNullRadioButton();
+
+			}
+
 		} catch (Exception actionException) {
 			logger.error(actionException.getMessage());
 		}
-
+		logger.debug("***fin metodo cargarCamposTexto***");
 	}
 
 	/**********************************************
-	 * Carga del DTO con los datos del formulario
+	 * Carga en el DTO los datos del formulario
+	 * 
 	 *********************************************/
 	protected UsuarioDTO loadRecord() {
 
 		String sDate;
 
-		logger.debug("inicio loadRecord");
+		logger.debug("***inicio metodo loadRecord***");
 
 		// Se crea una instancia del bean usuario
 		UsuarioDTO usuarioDTO = new UsuarioDTO();
@@ -239,20 +292,27 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		usuarioDTO.setPassword(passwordField.getText());
 		usuarioDTO.setCodigoRol(Integer.parseInt(rolField.getSelectedItem().toString()));
 
-		if (!(fechaAltaField.getText().isEmpty())) {
+		sDate = fechaAltaField.getText();
 
-			sDate = fechaAltaField.getText();
+		if (checkDate(sDate)) {
+
 			try {
+
 				usuarioDTO.setFechaAlta(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
+
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 
-		if (!(fechaBajaField.getText().isEmpty())) {
-			sDate = fechaBajaField.getText();
+		sDate = fechaBajaField.getText();
+
+		if (checkDate(sDate)) {
+
 			try {
+
 				usuarioDTO.setFechaBaja(new SimpleDateFormat("dd/MM/yyyy").parse(sDate));
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
@@ -263,9 +323,13 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 
 		usuarioDTO.setCarpetaDoc(carpetaField.getText());
 
-		// usuarioDTO.setIdioma();
+		// TODO COMPROBAR IDIOMA EN CREACION
 
-		// TODO usuarioDTO.setIdioma(idioma);
+		if (!idiomaField.getText().isEmpty()) {
+			usuarioDTO.setIdioma(idiomaField.getText().toCharArray());
+
+		}
+
 		// DEBUG***************************
 		logger.debug("*****Se muestra los datos de usuario capturados");
 		logger.debug(usuarioDTO.getNombreUsuario());
@@ -282,38 +346,90 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		return usuarioDTO;
 	}
 
+	/**
+	 * Comprobar fecha
+	 * 
+	 */
+	private boolean checkDate(String sDate) {
+		boolean error = false;
+
+		if (sDate.isEmpty()) {
+			error = true;
+		}
+
+		if (!(error)) {
+			String sDate2 = sDate;
+			sDate2 = sDate2.replaceAll("/", "").trim();
+			if (sDate2.length() > 0) {
+				try {
+					Date d = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+
+				} catch (ParseException e) {
+					error = true;
+					// TODO
+
+					// MENSAJE DE FECHA NO VALIDA
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+
+		return !error;
+
+	}
+
 	/********************************************
 	 * Lista de reglas de validacion *
+	 * 
 	 ********************************************/
 	protected boolean validateRecord() throws Exception {
 
 		if (usuarioField.getText().isEmpty() || passwordField.getText().isEmpty()) {
 
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
+			// TODO
+			/* ENVIAR MENSAJES A CONSOLA */
 		}
 
 		if (usuarioField.getText().trim().equals("") || passwordField.getText().trim().equals("")) {
 
+			setStatusDisplay(getMANDATORY_FIELDS_MSG());
 			throw new EX_MANDATORY_FIELDS(getMANDATORY_FIELDS_MSG());
+			
 		}
 
 		try {
-			Date d = null;
-			;
-			if (!(fechaAltaField.getText().isEmpty()))
-				d = new SimpleDateFormat("dd/MM/yyyy").parse(fechaAltaField.getText());
-			if (!(fechaBajaField.getText().isEmpty()))
-				d = new SimpleDateFormat("dd/MM/yyyy").parse(fechaBajaField.getText());
+
+			@SuppressWarnings("unused")
+			Date date = null;
+
+			if (!(fechaAltaField.getText().isEmpty())) {
+
+				date = new SimpleDateFormat("dd/MM/yyyy").parse(fechaAltaField.getText());
+			}
+
+			if (!(fechaBajaField.getText().isEmpty())) {
+				date = new SimpleDateFormat("dd/MM/yyyy").parse(fechaBajaField.getText());
+			}
+
 		} catch (Exception e) {
+			setStatusDisplay(getINVALID_DATE_MSG());
 			throw new EX_INVALID_DATE(getINVALID_DATE_MSG());
 		}
 		;
 
-		logger.debug("*****Usuario validado******");
+		setStatusDisplay("*****Usuario validado******");
+		
 		return true;
-		// TODO validacion para fechas
-		// Validacion idioma
+
 	}
+
+	/*****
+	 * Crea un usuario aleatorio
+	 * 
+	 */
 
 	private UsuarioDTO CreateRandomUser() {
 
@@ -325,43 +441,33 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 		return usuarioDTO;
 	}
 
+	/*****
+	 * Agrega un elemento a la lista mediante el uso del modelo subyacente
+	 * 
+	 */
 	private void agregarUsuarioALista(UsuarioDTO usuarioDTO) {
 
-		CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
+		CustomListModel customListModel = (CustomListModel) jlistaUsuarios.getModel();
 
-		cl.addUsuario(usuarioDTO);
+		customListModel.addUsuario(usuarioDTO);
 	}
 
-	private void BorrarUsuarioDeLista(UsuarioDTO usuarioDTO) {
+	/*****
+	 * Elimina un elemento de la lista de usuarios mediante el uso del modelo
+	 * subyacente
+	 * 
+	 */
+	private void BorrarUsuarioDeLista(String userName) {
 
-		CustomListModel cl = (CustomListModel) jlistaUsuarios.getModel();
+		CustomListModel customListModel = (CustomListModel) jlistaUsuarios.getModel();
 
-		cl.removeUsuario(usuarioDTO);
+		customListModel.removeUsuario(userName);
 
 	}
-
-	private void limpiaPantalla() {
-
-		Component[] allTextfields = getJpanelFields().getComponents();
-
-		// Se asocia los objetos jpanelFields a las variables privadas de las clases de
-		// herencia
-
-		for (int i = 0; i < allTextfields.length; i++) {
-			// casteamos al tipo adecuado y buscamos en el form
-			if ((allTextfields[i] instanceof JTextField)) {
-				// aislamos el objeto
-
-				JTextField p = (JTextField) allTextfields[i];
-				p.setText("");
-
-			} else if ((allTextfields[i] instanceof JFormattedTextField)) {
-				// aislamos el objeto
-				JFormattedTextField p = (JFormattedTextField) allTextfields[i];
-				p.setText("");
-
-			}
-		}
-	}
+	//TODO No crear usuario duplicado
+	
+	//TODO No guardar sino hay clave. Al tomar un registro existente, borrar la clave y guardar
+	
+	//TODO Inclur navegacion
 
 }
