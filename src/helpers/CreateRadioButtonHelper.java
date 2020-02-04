@@ -35,15 +35,19 @@ public class CreateRadioButtonHelper {
 
 		//Habilitar eventos y agregar la acción 
 		rdbtnEnglish.setActionCommand("EN");
+		rdbtnEnglish.setName("EN");
 		rdbtnEnglish.addActionListener(acListener);
 
 		rdbtnEspa.setActionCommand("ES");
+		rdbtnEnglish.setName("ES");
 		rdbtnEspa.addActionListener(acListener);
 
 		rdbtnGerman.setActionCommand("GE");
+		rdbtnEnglish.setName("GE");
 		rdbtnGerman.addActionListener(acListener);
 
 		rdbtnFrench.setActionCommand("FR");
+		rdbtnEnglish.setName("FR");
 		rdbtnFrench.addActionListener(acListener);
 
 		// añadir al grupo

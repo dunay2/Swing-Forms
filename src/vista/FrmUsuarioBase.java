@@ -1,24 +1,29 @@
 package vista;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
-import exception.EX_MANDATORY_FIELDS;
 import helpers.CreateButtonHelper;
 import helpers.CreateFieldHelper;
 import helpers.CreateRadioButtonHelper;
-import modelo.GestorUsuario;
-import modelo.IGestorUsuario;
 import modelo.UsuarioDTO;
 import utilities.ProyectBundle;
 
@@ -35,6 +40,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 	private JPanel jpanelFields;
 	private JPanel jpanelButtons;
+	private JPanel jpanelRadioButtons;
 
 	private JList<UsuarioDTO> jlistaUsuarios;
 	
@@ -75,7 +81,7 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 		// Se asocia los objetos jpanelFields a las variables privadas de las clases de
 		// herencia
-		Class currentClass = getClass();
+		Class<? extends FrmUsuarioBase> currentClass = getClass();
 		Field[] fields = currentClass.getDeclaredFields();
 		boolean foundFlag = false;
 
@@ -107,7 +113,6 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 								field.set(this, tf);
 								break;
 							} catch (IllegalArgumentException | IllegalAccessException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -116,14 +121,17 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 
 		leftHalf.add(jpanelFields);
 
-		jpanelButtons = new CreateButtonHelper().createButtons(this);
-
+		setJpanelRadioButtons((JPanel) new CreateRadioButtonHelper().createRadioButtons(this));
+		
+		leftHalf.add(getJpanelRadioButtons());
+		jpanelButtons = new CreateButtonHelper().createButtons(this);		
 		leftHalf.add(jpanelButtons);
+		
 		add(leftHalf);
 		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
 		add(createInfoDisplay());
 		add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
-		add(new CreateRadioButtonHelper().createRadioButtons(this));
+
 
 	}
 
@@ -198,6 +206,38 @@ public abstract class FrmUsuarioBase<T> extends JPanel implements  ActionListene
 		return jlistaUsuarios;
 	}
 
+	 protected void limpiaPantalla() {
+
+		// Se asocia los objetos jpanelFields a las variables privadas de las clases de
+
+		 // herencia
+		 
+		 Component[] allTextfields=jpanelFields.getComponents();
+		 
+		for (int i = 0; i < allTextfields.length; i++) {
+			// casteamos al tipo adecuado y buscamos en el form
+			if ((allTextfields[i] instanceof JTextField)) {
+				// aislamos el objeto
+
+				JTextField jTextField = (JTextField) allTextfields[i];
+				jTextField.setText("");
+
+			} else if ((allTextfields[i] instanceof JFormattedTextField)) {
+				// aislamos el objeto
+				JFormattedTextField jFormattedTextField = (JFormattedTextField) allTextfields[i];
+				jFormattedTextField.setText("");
+
+			}
+		}
+	}
+
+	public JPanel getJpanelRadioButtons() {
+		return jpanelRadioButtons;
+	}
+
+	public void setJpanelRadioButtons(JPanel jpanelRadioButtons) {
+		this.jpanelRadioButtons = jpanelRadioButtons;
+	}
 
 
 }
