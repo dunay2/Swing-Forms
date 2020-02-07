@@ -466,5 +466,7 @@ public class FrmUsuario extends FrmUsuarioBase<UsuarioDTO> {
 	// TODO No crear usuario duplicado en lista y mostrar mensaje usuario ya existe.
 
 	// TODO Incluir navegacion bloqueando botones
-
+	
+	// TODO realizar una precarga donde se indique el idioma de arranque
+		
 }
